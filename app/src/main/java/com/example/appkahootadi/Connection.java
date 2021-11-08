@@ -7,10 +7,14 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 
-public class Connection extends Fragment {
-
+public class Connection extends Fragment implements View.OnClickListener {
+    Button btn;
+    ImageView iv;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -41,9 +45,15 @@ public class Connection extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_connection, container, false);
+        View v = inflater.inflate(R.layout.fragment_connection, container, false);
+        btn = (Button) v.findViewById(R.id.btn);
+        btn.setOnClickListener(this);
+        return v;
+
     }
+    public void onClick(View v){
+    }
+
 }

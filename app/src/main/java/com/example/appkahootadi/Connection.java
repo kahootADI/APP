@@ -1,20 +1,31 @@
 package com.example.appkahootadi;
 
+import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
 
-public class Connection extends Fragment implements View.OnClickListener {
-    Button btn;
-    ImageView iv;
+import java.io.IOException;
+
+import lipermi.handler.CallHandler;
+import lipermi.net.Client;
+
+
+public class Connection extends Fragment implements View.OnClickListener{
+    private Button btn;
+    private EditText serverIP;
+    Handler handler;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -37,6 +48,7 @@ public class Connection extends Fragment implements View.OnClickListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        handler= new Handler(Looper.getMainLooper());
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -54,6 +66,40 @@ public class Connection extends Fragment implements View.OnClickListener {
 
     }
     public void onClick(View v){
+
+        new Conn().execute();
     }
 
+    class Conn extends AsyncTask<ImageView, Void, ImageView> {
+        ImageView iv;
+        @Override
+        protected ImageView doInBackground(ImageView... params) {
+            Looper.prepare();
+            try {
+                CallHandler callHandler = new CallHandler();
+                serverIP = (EditText) getView().findViewById(R.id.textIp);
+                String ip = serverIP.getText().toString();
+                Client client = new Client(ip, 7777, callHandler);
+                //TestService testService = (TestService) client.getGlobal(TestService.class);
+                //testService.getResponse("Hola");
+                //Toast.makeText(getContext(), testService.getResponse("Pepe"), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Servidor Disponible", Toast.LENGTH_SHORT).show();
+                handler.post(new Runnable() {
+                    public void run() {
+                        iv = getView().findViewById(R.id.image);
+                        iv.setImageResource(R.drawable.orange);                    }
+                });
+                //client.close();
+            } catch (IOException e) {
+                Toast.makeText(getContext(), "Servidor no Disponible", Toast.LENGTH_SHORT).show();
+            }
+            Looper.loop();
+            return iv;
+        }
+
+    }
+
+    public interface TestService {
+        public String getResponse(String data);
+    }
 }

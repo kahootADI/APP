@@ -1,5 +1,7 @@
 package com.example.appkahootadi;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,11 +9,13 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
 
-public class User extends Fragment {
-
-
+public class User extends Fragment implements View.OnClickListener {
+    EditText nickname;
+    Button startBtn;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -20,7 +24,6 @@ public class User extends Fragment {
     private String mParam2;
 
     public User() {
-        // Required empty public constructor
     }
 
     public static User newInstance(String param1, String param2) {
@@ -44,7 +47,25 @@ public class User extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user, container, false);
+        View v = inflater.inflate(R.layout.fragment_user, container, false);
+        startBtn = (Button) v.findViewById(R.id.start);
+        startBtn.setOnClickListener(this);
+        nickname = (EditText) v.findViewById(R.id.txtNick);
+        SharedPreferences preferences = getContext().getSharedPreferences("credentials",Context.MODE_PRIVATE);
+        String userNick = preferences.getString("user","");
+
+        nickname.setText(userNick);
+
+        return v;
+    }
+
+    @Override
+    public void onClick(View view) {
+        String user = nickname.getText().toString();
+        SharedPreferences preferences = getContext().getSharedPreferences("credentials",Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("user",user);
+        editor.apply();
     }
 }
